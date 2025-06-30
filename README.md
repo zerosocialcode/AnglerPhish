@@ -22,22 +22,23 @@
 5. [Project Structure](#project-structure)
 6. [Universal Launcher (Gateway)](#universal-launcher-gateway)
 7. [Usage](#usage)
-8. [Dependencies](#dependencies)
-9. [External Tools](#external-tools)
-10. [Contributing](#contributing)
-11. [License](#license)
+8. [Registering New Tools](#registering-new-tools)
+9. [Dependencies](#dependencies)
+10. [External Tools](#external-tools)
+11. [Contributing](#contributing)
+12. [License](#license)
 
 ---
 
 ## Features
 
-- **Universal Launcher (`Gateway`):** Auto-detect and execute any tool module dropped into `tools/`.
+- **Universal Launcher (`Gateway`):** Auto-detect and execute any tool module dropped into `tools/` (must be registered in `.config.json`).
 - **Website Cloning (`AnglerCloning`):** Effortlessly mirror any website for offline or analytical purposes.
 - **Local Hosting (`AnglerPhish`):** Serve static cloned content via a robust Flask-based server.
 - **Public Exposure via Tunnels:** Seamlessly expose your local server using Cloudflared (fully tested).  
   > **Note:** Only **Cloudflared** is fully tested. Support for **Ngrok** and **LocalTunnel** is planned, but these methods are not fully implemented or tested yet.
 - **Colorized Terminal UI:** Enhanced UX with clear, color-coded prompts and outputs.
-- **Plug-and-Play Architecture:** Add new tools by simply placing them in the `tools/` directory—no core modification required.
+- **Plug-and-Play Architecture:** Add new tools by simply placing them in the `tools/` directory and registering them in `.config.json`—no core modification required.
 
 ---
 
@@ -158,6 +159,7 @@ Follow the instructions for your environment:
 ```
 AnglerPhish/
 ├── main.py                   # Universal launcher (Gateway)
+├── .config.json              # Configuration file for registering available tools
 ├── credentials/              # Captured data storage (per tool)
 └── tools/                    # Tool modules loaded by Gateway
     ├── AnglerCloning/        # Website cloning script (cloner.py)
@@ -173,7 +175,7 @@ AnglerPhish/
 
 ## Universal Launcher (Gateway)
 
-The `main.py` script in the root directory serves as the **Gateway**. It dynamically scans the `tools/` directory, lists all available modules (any subfolder with a `main.py`), and allows you to interactively select and execute them.
+The `main.py` script in the root directory serves as the **Gateway**. It dynamically scans the `.config.json` file to discover and load available tools. Only tools registered in `.config.json` will be presented in the menu for execution.
 
 **To start:**
 ```bash
@@ -190,6 +192,40 @@ Follow the prompts to select and launch available tools (e.g., `AnglerCloning`, 
 
 > **Only Cloudflared is fully tested for public exposure.  
 > Ngrok and LocalTunnel are included for planned future support, but are not yet fully implemented or tested.**
+
+---
+
+## Registering New Tools
+
+If you want to add a new tool to the `tools/` directory and make it available in the Gateway menu, you must register it in the `.config.json` file at the root of the repository.
+
+**How to register a new tool:**
+1. Place your tool (with its `main.py` or entry script) inside the `tools/` directory.
+2. Open the `.config.json` file.
+3. Add a new entry under the `"tools"` array specifying:
+    - `"name"`: The display name for your tool.
+    - `"entry"`: The relative path to your tool’s entry script (e.g., `"YourToolName/main.py"`).
+
+**Example `.config.json`:**
+```json
+{
+  "tools": [
+    {
+      "name": "AnglerPhish",
+      "entry": "AnglerPhish/main.py"
+    },
+    {
+      "name": "AnglerCloning",
+      "entry": "AnglerCloning/cloner.py"
+    },
+    {
+      "name": "YourNewTool",
+      "entry": "YourNewTool/main.py"
+    }
+  ]
+}
+```
+> If you do not add your tool to `.config.json`, the Gateway script will not detect or display it for selection.
 
 ---
 
@@ -221,7 +257,7 @@ pip install -r requirements.txt
 
 ## Contributing
 
-Contributions are welcome! To add a new tool, simply create a new subdirectory under `tools/` containing a `main.py`. The Gateway will auto-detect and list it for use.
+Contributions are welcome! To add a new tool, follow the [Registering New Tools](#registering-new-tools) section above.
 
 **Example Tool Structure:**
 ```
@@ -235,7 +271,7 @@ tools/
 1. **Fork the repository**
 2. **Create a feature branch:**  
    `git checkout -b feature/your-tool`
-3. **Add your tool under `tools/`**
+3. **Add your tool under `tools/` and register it in `.config.json`**
 4. **Commit and push your changes**
 5. **Submit a pull request**
 
