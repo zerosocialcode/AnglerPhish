@@ -33,7 +33,8 @@
 - **Universal Launcher (`Gateway`):** Auto-detect and execute any tool module dropped into `tools/`.
 - **Website Cloning (`AnglerCloning`):** Effortlessly mirror any website for offline or analytical purposes.
 - **Local Hosting (`AnglerPhish`):** Serve static cloned content via a robust Flask-based server.
-- **Public Exposure via Tunnels:** Seamlessly expose your local server using Cloudflared (tested), Ngrok, or LocalTunnel.
+- **Public Exposure via Tunnels:** Seamlessly expose your local server using Cloudflared (fully tested).  
+  > **Note:** Only **Cloudflared** is fully tested. Support for **Ngrok** and **LocalTunnel** is planned, but these methods are not fully implemented or tested yet.
 - **Colorized Terminal UI:** Enhanced UX with clear, color-coded prompts and outputs.
 - **Plug-and-Play Architecture:** Add new tools by simply placing them in the `tools/` directory—no core modification required.
 
@@ -45,9 +46,9 @@
 - **pip** (Python package manager)
 - **wget** (for deep web cloning)
 - **Tunnel CLIs:**  
-    - `cloudflared`
-    - `ngrok`
-    - `lt` (localtunnel)  
+    - `cloudflared` (fully tested)
+    - `ngrok` (not fully implemented)
+    - `lt` (localtunnel) (not fully implemented)  
 > **Note:** Tunnel CLIs must be installed and have executable permission in your environment.
 
 ---
@@ -171,7 +172,8 @@ Follow the prompts to select and launch available tools (e.g., `AnglerCloning`, 
 - **AnglerCloning:** Clone any website for offline analysis or research.  
 - **AnglerPhish:** Host previously cloned content locally and, if desired, expose it publicly via a secure tunnel.
 
-> **Ensure all tunnel CLIs are installed and executable before trying exposure features.**
+> **Only Cloudflared is fully tested for public exposure.  
+> Ngrok and LocalTunnel are included for planned future support, but are not yet fully implemented or tested.**
 
 ---
 
@@ -193,9 +195,9 @@ pip install -r requirements.txt
 ## External Tools
 
 - **wget** (for deep web cloning)
-- **cloudflared** (secure tunnel, tested)
-- **ngrok** (alternative tunnel)
-- **lt (LocalTunnel)** (alternative tunnel)
+- **cloudflared** (secure tunnel, fully tested)
+- **ngrok** (alternative tunnel, not fully implemented)
+- **lt (LocalTunnel)** (alternative tunnel, not fully implemented)
 
 > These must be installed manually and have executable permission in your environment.
 
