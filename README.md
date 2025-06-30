@@ -13,18 +13,19 @@
 ## Table of Contents
 
 1. [Features](#features)
-2. [Prerequisites](#prerequisites)
-3. [Installation](#installation)
+2. [Why Cloudflared First?](#why-cloudflared-first)
+3. [Prerequisites](#prerequisites)
+4. [Installation](#installation)
     - [Linux](#linux-installation)
     - [Termux (Android)](#termux-installation)
     - [Windows](#windows-installation)
-4. [Project Structure](#project-structure)
-5. [Universal Launcher (Gateway)](#universal-launcher-gateway)
-6. [Usage](#usage)
-7. [Dependencies](#dependencies)
-8. [External Tools](#external-tools)
-9. [Contributing](#contributing)
-10. [License](#license)
+5. [Project Structure](#project-structure)
+6. [Universal Launcher (Gateway)](#universal-launcher-gateway)
+7. [Usage](#usage)
+8. [Dependencies](#dependencies)
+9. [External Tools](#external-tools)
+10. [Contributing](#contributing)
+11. [License](#license)
 
 ---
 
@@ -37,6 +38,21 @@
   > **Note:** Only **Cloudflared** is fully tested. Support for **Ngrok** and **LocalTunnel** is planned, but these methods are not fully implemented or tested yet.
 - **Colorized Terminal UI:** Enhanced UX with clear, color-coded prompts and outputs.
 - **Plug-and-Play Architecture:** Add new tools by simply placing them in the `tools/` directory—no core modification required.
+
+---
+
+## Why Cloudflared First?
+
+**Cloudflared** is selected as the primary and recommended tunneling method for public exposure because:
+- **Stability & Reliability:** Cloudflared consistently offers stable, high-uptime tunnels with minimal downtime or throttling.
+- **Bypasses Most NAT/Firewall Restrictions:** It directly connects through Cloudflare's global edge network, making it more robust in restrictive environments.
+- **No Account/Token Required:** Unlike some alternatives, Cloudflared does not require prior registration or API keys for basic tunnel usage.
+- **Security:** Traffic is proxied through Cloudflare's network, benefitting from their DDoS protection and security features.
+- **Performance:** Low latency and high throughput are maintained even under heavy load.
+- **Widely Trusted:** Used by organizations worldwide for secure, production-grade tunneling.
+- **Cross-platform Support:** Runs on Linux, Windows, macOS, and ARM-based devices (including Android/Termux).
+
+> For these reasons, **Cloudflared** is the only exposure method fully tested and supported in AnglerPhish at this time. Ngrok and LocalTunnel are included for future support, but are not fully implemented or tested yet.
 
 ---
 
