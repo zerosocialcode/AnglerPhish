@@ -1,0 +1,12 @@
+{
+  "tools": [
+    {
+      "name": "AnglerPhish",
+      "entry": "AnglerPhish/main.py"
+    },
+    {
+      "name": "AnglerCloning",
+      "entry": "AnglerCloning/cloner.py"
+    }
+  ]
+}
